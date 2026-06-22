@@ -1,0 +1,23 @@
+# Bytecode y cachés de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Entornos virtuales
+.venv/
+venv/
+env/
+
+# Variables de entorno locales
+.env
+
+# Cachés y tooling
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Archivos de sistema/IDE comunes
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
