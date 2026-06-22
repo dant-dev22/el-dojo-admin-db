@@ -1,0 +1,19 @@
+[project]
+name = "eldojo-data-layer"
+version = "0.1.0"
+description = "Capa de base de datos para una plataforma multi-tenant de dojos."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "SQLAlchemy>=2.0,<3.0",
+    "alembic>=1.13,<2.0",
+    "PyMySQL>=1.1,<2.0",
+    "python-dotenv>=1.0,<2.0",
+]
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["app", "app.core", "app.db", "app.models", "scripts"]
