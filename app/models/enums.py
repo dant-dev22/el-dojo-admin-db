@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from enum import Enum
 
+from sqlalchemy import Enum as SqlEnum
+
 
 class UserRole(str, Enum):
     SUPER_ADMIN = "super_admin"
@@ -62,3 +64,19 @@ class NotificationStatus(str, Enum):
     QUEUED = "queued"
     SENT = "sent"
     FAILED = "failed"
+
+
+def db_enum(enum_class: type[Enum], *, name: str) -> SqlEnum:
+    """Crea un ENUM SQLAlchemy usando los valores reales del Enum.
+
+    SQLAlchemy, si no se configura, tiende a usar los nombres de los miembros
+    (`ORG_ADMIN`) en vez de sus valores (`org_admin`). El esquema y la migración
+    inicial de este proyecto usan los valores en minúsculas, así que este helper
+    mantiene ORM y base de datos alineados.
+    """
+
+    return SqlEnum(
+        enum_class,
+        name=name,
+        values_callable=lambda enum_members: [member.value for member in enum_members],
+    )

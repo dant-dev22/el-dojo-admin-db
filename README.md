@@ -114,6 +114,39 @@ Seed incluido:
 - Usuario admin: `dantedev22@gmail.com`
 - Password de ejemplo: `d4nt3r4d`
 
+## Cuando el backend requiera cambios en DB
+
+Si en el futuro el proyecto de backend necesita un cambio de estructura en base de datos, sigue este flujo:
+
+1. Documenta el cambio funcional en el backend
+2. Traduce ese cambio a una modificación de esquema en este proyecto de DB
+3. Actualiza primero los modelos SQLAlchemy en `app/models/`
+4. Crea una nueva migración Alembic en este repositorio
+5. Revisa y prueba la migración en un entorno de desarrollo o staging
+6. Aplica la migración en el servidor con `python -m alembic upgrade head`
+7. Después despliega el backend que depende de ese nuevo esquema
+
+Regla recomendada:
+
+- Este repositorio de DB debe ser la fuente de verdad del esquema
+- El backend no debería crear ni alterar tablas automáticamente con `create_all()`
+- Todo cambio estructural debe quedar versionado aquí mediante Alembic
+- El despliegue correcto es: migración primero, backend después
+
+Ejemplo de flujo:
+
+```powershell
+# 1. Editar modelos
+# 2. Crear migración nueva
+python -m alembic revision -m "add campo x a students"
+
+# 3. Completar la migración
+# 4. Aplicar cambios
+python -m alembic upgrade head
+```
+
+Si el cambio además requiere datos iniciales, catálogos o backfill, crea un script adicional o amplía el proceso de migración de forma controlada y siempre pruébalo antes en staging.
+
 ## Modelos incluidos
 
 - `organizations`

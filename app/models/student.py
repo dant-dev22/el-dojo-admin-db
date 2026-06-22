@@ -5,11 +5,11 @@ from __future__ import annotations
 from datetime import date, datetime
 from decimal import Decimal
 
-from sqlalchemy import CheckConstraint, Date, DateTime, Enum, ForeignKey, Index, String, Text
+from sqlalchemy import CheckConstraint, Date, DateTime, ForeignKey, Index, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
-from app.models.enums import PaymentStatus, StudentStatus
+from app.models.enums import PaymentStatus, StudentStatus, db_enum
 from app.models.mixins import CreatedAtMixin, TimestampMixin, currency_column, monetary_column
 
 
@@ -56,11 +56,11 @@ class Student(TimestampMixin, Base):
     currency: Mapped[str] = currency_column()
     next_payment_date: Mapped[date | None] = mapped_column(Date(), nullable=True)
     payment_status: Mapped[PaymentStatus] = mapped_column(
-        Enum(PaymentStatus, name="student_payment_status"),
+        db_enum(PaymentStatus, name="student_payment_status"),
         nullable=False,
     )
     status: Mapped[StudentStatus] = mapped_column(
-        Enum(StudentStatus, name="student_status"),
+        db_enum(StudentStatus, name="student_status"),
         nullable=False,
     )
     guardian_name: Mapped[str | None] = mapped_column(String(150), nullable=True)

@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from sqlalchemy import Boolean, DateTime, Enum, ForeignKey, Index, String
+from sqlalchemy import Boolean, DateTime, ForeignKey, Index, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
-from app.models.enums import DevicePlatform, UserRole
+from app.models.enums import DevicePlatform, UserRole, db_enum
 from app.models.mixins import CreatedAtMixin, TimestampMixin
 
 
@@ -21,7 +21,7 @@ class User(TimestampMixin, Base):
     email: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     role: Mapped[UserRole] = mapped_column(
-        Enum(UserRole, name="user_role"),
+        db_enum(UserRole, name="user_role"),
         nullable=False,
     )
     is_active: Mapped[bool] = mapped_column(
@@ -85,7 +85,7 @@ class DeviceToken(CreatedAtMixin, Base):
     )
     token: Mapped[str] = mapped_column(String(255), nullable=False)
     platform: Mapped[DevicePlatform] = mapped_column(
-        Enum(DevicePlatform, name="device_platform"),
+        db_enum(DevicePlatform, name="device_platform"),
         nullable=False,
     )
 

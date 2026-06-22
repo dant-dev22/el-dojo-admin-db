@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from datetime import datetime, time
 
-from sqlalchemy import Boolean, CheckConstraint, DateTime, Enum, ForeignKey, Index, String, Text, UniqueConstraint
+from sqlalchemy import Boolean, CheckConstraint, DateTime, ForeignKey, Index, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
-from app.models.enums import AttendanceMethod
+from app.models.enums import AttendanceMethod, db_enum
 from app.models.mixins import CreatedAtMixin, TimestampMixin
 
 
@@ -135,7 +135,7 @@ class Attendance(CreatedAtMixin, Base):
     )
     check_in_at: Mapped[datetime] = mapped_column(DateTime(), nullable=False)
     method: Mapped[AttendanceMethod] = mapped_column(
-        Enum(AttendanceMethod, name="attendance_method"),
+        db_enum(AttendanceMethod, name="attendance_method"),
         nullable=False,
     )
     registered_by: Mapped[int | None] = mapped_column(
