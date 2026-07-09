@@ -65,20 +65,25 @@ def run_seed() -> None:
             session.add(branch)
             session.flush()
 
-        discipline = session.scalar(
-            select(Discipline).where(
-                Discipline.organization_id == organization.id,
-                Discipline.name == "BJJ",
+        discipline_by_name: dict[str, Discipline] = {}
+        for discipline_name in ["MMA", "BJJ", "JUDO"]:
+            discipline = session.scalar(
+                select(Discipline).where(
+                    Discipline.organization_id == organization.id,
+                    Discipline.name == discipline_name,
+                )
             )
-        )
-        if discipline is None:
-            discipline = Discipline(
-                organization_id=organization.id,
-                name="BJJ",
-                is_active=True,
-            )
-            session.add(discipline)
-            session.flush()
+            if discipline is None:
+                discipline = Discipline(
+                    organization_id=organization.id,
+                    name=discipline_name,
+                    is_active=True,
+                )
+                session.add(discipline)
+                session.flush()
+            discipline_by_name[discipline_name] = discipline
+
+        discipline = discipline_by_name["BJJ"]
 
         existing_rank_names = {
             rank_name
@@ -132,7 +137,7 @@ def run_seed() -> None:
         print("Seed completado correctamente.")
         print(f"Organización: {organization.name} ({organization.slug})")
         print(f"Sucursal: {branch.name} [{branch.timezone}]")
-        print(f"Disciplina: {discipline.name}")
+        print("Disciplinas: MMA, BJJ, JUDO")
         print(f"Admin: {ADMIN_EMAIL}")
         print("Password de ejemplo: d4nt3r4d")
         print(f"Fecha de referencia seed: {date.today().isoformat()}")
