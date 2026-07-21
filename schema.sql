@@ -15,6 +15,8 @@ CREATE TABLE organizations (
 
 CREATE TABLE users (
     id INT NOT NULL AUTO_INCREMENT,
+    first_name VARCHAR(100) NULL,
+    last_name VARCHAR(100) NULL,
     email VARCHAR(255) NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     role ENUM('super_admin', 'org_admin', 'branch_admin', 'student') NOT NULL,

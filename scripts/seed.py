@@ -108,6 +108,8 @@ def run_seed() -> None:
         user = session.scalar(select(User).where(User.email == ADMIN_EMAIL))
         if user is None:
             user = User(
+                first_name="Dante",
+                last_name="Dev",
                 email=ADMIN_EMAIL,
                 password_hash=build_demo_password_hash(ADMIN_PASSWORD),
                 role=UserRole.ORG_ADMIN,
@@ -115,6 +117,11 @@ def run_seed() -> None:
             )
             session.add(user)
             session.flush()
+        else:
+            if not user.first_name:
+                user.first_name = "Dante"
+            if not user.last_name:
+                user.last_name = "Dev"
 
         assignment = session.scalar(
             select(AdminAssignment).where(
