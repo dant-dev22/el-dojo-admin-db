@@ -2,6 +2,84 @@
 
 Capa de base de datos de la Fase 1 para una plataforma multi-tenant de dojos de BJJ, pensada para extenderse a otras artes marciales.
 
+## Local Set Up
+
+> Terminal recomendada: **Git Bash** (bash / MSYS2). Este repositorio no tiene su propio Makefile porque el backend `eldojo-backend-api` ya orquesta toda la infraestructura desde un solo lugar (ver `make db-reset` en el backend).
+
+Este repositorio contiene la infraestructura de base de datos (MySQL 8.0 via Docker) y las migraciones de esquema.
+
+### Prerrequisitos
+- Docker Desktop (o Docker Engine) corriendo localmente
+- Python 3.11+
+- make (disponible en Git Bash)
+
+### Forma rápida (recomendada, desde el backend)
+
+Desde el repositorio `eldojo-backend-api`, un solo comando hace TODO: levanta MySQL en Docker, espera que esté healthy, corre Alembic + las 10 migraciones manuales, y carga los seeds (incluidas 40 alumnos demo):
+
+```bash
+cd ../eldojo-backend-api
+make db-reset
+```
+
+---
+
+### Forma manual paso a paso (solo este repo)
+
+#### Paso 1: Levantar MySQL con Docker
+```bash
+docker compose -f docker-compose.local.yml up -d
+```
+
+Esto crea:
+- Contenedor `eldojo-mysql-local` con MySQL 8.0
+- Base de datos `eldojo_db` pre-creada
+- Usuario `eldojo_app` / password `Localpass_1234`
+- Puerto local **3307** mapeado al 3306 interno del contenedor
+- Volumen persistente `eldojo_mysql_data` para los datos
+
+Para verificar que la DB este lista (healthcheck):
+```bash
+docker compose -f docker-compose.local.yml ps
+```
+
+#### Paso 2: Crear entorno virtual e instalar dependencias
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install --upgrade pip setuptools wheel
+pip install -e .
+```
+
+#### Paso 3: Configurar variables de entorno
+```bash
+cp .env.example .env
+```
+
+Edita `.env` y asegúrate que `DATABASE_URL` use el puerto **3307** y la contraseña del docker-compose:
+```env
+DATABASE_URL=mysql+pymysql://eldojo_app:Localpass_1234@127.0.0.1:3307/eldojo_db
+```
+
+#### Paso 4: Ejecutar migraciones Alembic
+```bash
+python -m alembic upgrade head
+```
+
+#### Paso 5: Cargar datos semilla iniciales
+```bash
+python -m scripts.seed
+```
+
+Esto crea:
+- Organización: `El Dojo` / Sucursal: `Matriz`
+- Disciplina: `BJJ` + 5 rangos
+- Usuario admin demo: `dantedev22@gmail.com` / `d4nt3r4d`
+
+> Nota: Las 10 migraciones SQL manuales y los 6 seeds demo adicionales NO se aplican desde este repo. Se aplican desde `eldojo-backend-api` via `make db-reset` o `make db-migrate && make db-seed`.
+
+---
+
 ## Stack
 
 - MySQL 8
